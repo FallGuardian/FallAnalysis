@@ -1,1 +1,2 @@
 ./fallServer/settings.py
+./fallServer/*.pyc
