@@ -97,4 +97,11 @@ def getTableRowsByColValue(cur, tableName, colName, colValue):
 	cur.execute(sql,{'colValue':colValue})
 	return cur.fetchall()
 
-
+def insertNewId( cur, new, old ):
+	sql = """INSERT INTO `final_base_id` (`base_id`, `old`) VALUES (%s, %s)"""
+	try:
+		cur.execute(sql,(new,old))
+	except Exception, e:
+		raise e
+	
+	

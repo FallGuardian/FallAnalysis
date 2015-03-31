@@ -26,8 +26,11 @@ baseId = sys.argv[1]
 targetCols = ['base_id', 'id', 'acc_x', 'acc_y', 'acc_z', 'gyro_x', 'gyro_y', 'gyro_z', 'label']
 targetTypes = ['i','i','f','f','f','f','f','f','i']
 
-datas = list(database.getTableColsById(cur, 'lab_primitive2', targetCols, baseId))
+# targetCols = ['base_id', 'id', 'SVM', 'TA', 'SMA', 'AV', 'V', 'label']
+# targetTypes = ['i','i','f','f','f','f','f','i']
 
+datas = list(database.getTableColsById(cur, 'test_primitive', targetCols, baseId))
+# print datas
 if len(datas) != 400:
 	print '{} is broken'.format(baseId)
 	last = len(datas) - 1
@@ -55,9 +58,10 @@ print 'TA max:{}, TA min:{}'.format(max(TAs), min(TAs))
 print 'SVMs max:{}, SVMs min:{}'.format(max(SVMs), min(SVMs))
 plt.grid(True)
 plt.style.context('fivethirtyeight')
-plt.title('red:TA, blue:SVM, green:AV baseId %s'%(baseId))
-# plt.plot(range(len(TAs)), TAs, 'ro', range(len(SVMs)), SVMs, 'bs', range(len(AVs)), AVs, 'go')
-plt.plot(range(len(TAs)), TAs, 'r', range(len(SVMs)), SVMs, 'b', range(len(AVs)), AVs, 'g')
+# plt.title('red:TA, blue:SVM, green:AV baseId %s'%(baseId))
+plt.title('blue:SVM, baseId %s'%(baseId))
+plt.plot(range(len(SVMs)), SVMs )
+# plt.plot(range(len(TAs)), TAs, 'r', range(len(SVMs)), SVMs, 'b', range(len(AVs)), AVs, 'g')
 plt.axis([0, 400, floor(min(lowBound)), ceil(max(highBound))])
 # plot = plt.plot(range(len(SVMs)), SVMs, 'b')
 # plt.axis([0, 400, 0, 25])
