@@ -6,8 +6,8 @@ import MySQLdb
 def initialize():
 	# 
 	_host = "localhost"
-	_user = "fallDetect"
-	_pswd = "EtXpphf2bQ78QGBJ"
+	_user = "sabrina"
+	_pswd = "sabrina"
 	_db = "fallDetect"
 	#
 	db = MySQLdb.connect(host=_host, user=_user, passwd=_pswd, db=_db)
@@ -15,7 +15,7 @@ def initialize():
 		print 'Fail to connect'
 	else:
 		print 'Connect infomation => host: '+_host+', database: '+_db
-	return db.cursor()
+	return db
 
 def getFormatedData(cur, baseId):
 	cur.execute("SELECT * FROM `formated_data` WHERE `base_id`=%(baseId)s",{'baseId':baseId})
@@ -97,11 +97,24 @@ def getTableRowsByColValue(cur, tableName, colName, colValue):
 	cur.execute(sql,{'colValue':colValue})
 	return cur.fetchall()
 
-def insertNewId( cur, new, old ):
-	sql = """INSERT INTO `final_base_id` (`base_id`, `old`) VALUES (%s, %s)"""
+def insertPrimitive( db, dataTuple ):
+	sql = ("INSERT INTO `final_primitive_total`"
+		"(`base_id`, `id`, `acc_x`, `acc_y`, `acc_z`, `gyro_x`, `gyro_y`, `gyro_z`, `time_acc`, `time_gyro`, `gravity_x`, `gravity_y`, `gravity_z`, `time_stamp`, `label`, `old_base_id`)"
+		"VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
+	db.cursor().execute(sql,dataTuple)
+	db.commit()
+
+def insertNewId( db, new, old ):
+	sql = """INSERT INTO `final_base_id` (`base_id`, `old`) VALUES (%s,%s)"""
 	try:
-		cur.execute(sql,(new,old))
-	except Exception, e:
-		raise e
-	
+		data = (str(new), str(old))
+		db.cursor().execute(sql,data)
+		emp_no = db.cursor().lastrowid
+		print emp_no
+	except MySQLdb.Error, e:
+		try:
+			print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+		except IndexError:
+			print "MySQL Error: %s" % str(e)
+	db.commit()
 	
