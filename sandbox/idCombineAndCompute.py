@@ -1,3 +1,5 @@
+# encoding: utf-8
+#!/usr/bin/python
 import numpy as np
 import csv
 from time import time 
@@ -5,7 +7,8 @@ from datetime import datetime
 # Customized database function & login info. in database.py
 import database
 import dataManiplate
-cur = database.initialize()
+db = database.initialize()
+cur = db.cursor()
 
 ## @@ set TA, SVM, AV init @@ ##
 TAstart ,TAend = 0,40
@@ -20,10 +23,21 @@ targetTypes = ['i','i','f','f','f','f','f','f','i']
 targerIds = list(database.getColDistinct( cur, 'final_primitive_0', 'base_id'))
 targetIds2 = list(database.getColDistinct( cur, 'final_primitive_1','base_id'))
 
-database.insertNewId(cur, 1, 1)
-
-	
-
+database.insertNewId(db, 100, 100)
+## @@ SELECT OLD DATA @@ ##
+inputTable = 'final_primitive_1'
+primitive_1_base_id = database.getColDistinct(cur, inputTable, 'base_id')
+for base_id in primitive_1_base_id: 
+	print base_id[0]
+	for data,i in zip(database.getTableRowsByColValue(cur,inputTable,'base_id',base_id[0]),range(1,401)):
+		# new_base_id = data[0]-1484
+		# new_id = (data[0]-1484)*400+i
+		# tuple1 = (new_base_id,new_id)
+		tuple2 = (data[0],)
+		# newData = tuple1+data[2:15]+tuple2
+		newData = data[0:15]+tuple2
+		# print newData
+		database.insertPrimitive(db, newData)
 	
 
 
