@@ -17,52 +17,15 @@ def initialize():
 		print 'Connect infomation => host: '+_host+', database: '+_db
 	return db
 
-def getFormatedData(cur, baseId):
-	cur.execute("SELECT * FROM `formated_data` WHERE `base_id`=%(baseId)s",{'baseId':baseId})
-	return cur.fetchall()
-
-def getTempFormatedData(cur, baseId):
-	cur.execute("SELECT * FROM `formated_data2` WHERE `base_id`=%(baseId)s",{'baseId':baseId})
-	return cur.fetchall()
-
-
-
-def getSMAs(cur, ids):
-	data = []	
-	for i in ids:
-		if type(i) is int:
-			data.append(0)
-		elif type(i) is tuple:
-			cur.execute("SELECT `SMA` FROM `lab_primitive` WHERE `id`=%(id)s", {'id':(i[0]*400+1)} )
-			SMA = cur.fetchone()
-			if SMA is None:
-				data.append(0)
-			else:
-				data.append(SMA[0])
-
-	return data
 
 def getBaseId(cur):
 	cur.execute("SELECT * FROM `id_base`")
 	return list(cur.fetchall())
 
-def getBaseIdByFormated(cur):
-	cur.execute("SELECT DISTINCT `base_id` FROM `formated_data`")
-	return cur.fetchall()
-
 def getFallId(cur):
 	cur.execute("SELECT * FROM `fall_id`")
 	return list(cur.fetchall())
 
-def serializeId(target, all):
-	rst = []
-	for baseId in all:
-		if baseId in target:
-			rst.append(baseId)
-		else:
-			rst.append(0)
-
-	return rst
 
 def overThreadHold(cur, id_base):
 	start = id_base*400
@@ -73,8 +36,8 @@ def overThreadHold(cur, id_base):
 # Generenic Function For Database
 def getTableColsById(cur, tableName, colNames, idValue):
 	ss = ','.join(['`{}`'.format(s) for s in colNames])
-	sql = 'SELECT '+ss+' FROM `{}` WHERE `base_id`=%(idValue)s ORDER BY `id`'.format(tableName)
-	cur.execute(sql,{'idValue':idValue})
+	sql = 'SELECT '+ss+' FROM `{}` WHERE `base_id`=%s ORDER BY `id`'.format(tableName)
+	cur.execute(sql,(idValue,))
 	return cur.fetchall()
 
 def getTableAll(cur, tableName):
@@ -117,4 +80,6 @@ def insertNewId( db, new, old ):
 		except IndexError:
 			print "MySQL Error: %s" % str(e)
 	db.commit()
+
+
 	
