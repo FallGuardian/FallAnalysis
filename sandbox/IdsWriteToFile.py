@@ -21,3 +21,4 @@ for base_id in allIds:
 	outputStr+=str(base_id[0])+","
 
 fw.write(outputStr)
+fw.close()
