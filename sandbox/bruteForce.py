@@ -3,8 +3,7 @@ import numpy as np
 import csv
 from time import time 
 from datetime import datetime
-import database
-import dataManiplate
+from package import *
 import string
 import sys
 import operator
@@ -89,21 +88,6 @@ SVMstart, SVMend = configsDict['SVMstart'], configsDict['SVMend']
 TAstart ,TAend = configsDict['TAstart'], configsDict['TAend']
 AVstart, AVend = configsDict['AVstart'], configsDict['AVend']
 SVMstep, TAstep, AVstep = configsDict['SVMstep'], configsDict['TAstep'], configsDict['AVstep']
-
-
-##
-## @@ INPUT: read base_id from file @@ ##
-##
-# readFileName = 'test1.txt'
-# targerIds = []
-# with open("{}/input_id/{}".format(basePath, readFileName), 'rb') as fp:
-# 	reader = csv.reader(fp ,delimiter=',')
-# 	for row in reader:
-# 		targerIds.extend(row)
-
-# print 'Input base_id file: {}\n\r'.format(readFileName)
-
-
 
 
 ##

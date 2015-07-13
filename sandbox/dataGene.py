@@ -21,8 +21,7 @@ from datetime import datetime
 ##
 ##	@@ Database initialization @@
 ##
-import database
-import dataManiplate
+from package import *
 db = database.initialize()
 cur = db.cursor()
 fileName = ''
@@ -31,7 +30,7 @@ basePath = "/home/youngcoma/Dropbox/newFallDetect/experiment"
 ## @@ Script Input and Open File @@ ##
 if len(sys.argv) == 2:
 	if sys.argv[1] == '-h':
-		print '''Usage: python dataGene [ReadFileName.csv]
+		print '''Usage: python dataGene.py [ReadFileName.csv]
 				ReadFileName.csv need to locate at folder /experiment/input_id/,'''
 		# Reading the file from idSets
 	else:
@@ -107,39 +106,43 @@ for _id in targerIds:
 	if mode[0] == 1:
 		SVM = dataManiplate.getGlobalMax(SVMColumn)
 	elif mode[0] == 2:
-		SVMinterval = 50	
+		SVMinterval = 50
 		SVM = dataManiplate.getLocalMaxDiffence(SVMColumn, SVMinterval)
 	
 	##
-	## @@ TA & TAdelta calculate @@ ##
+	## @@ SVM integal @@ ##
 	##
-	TAColumn = [dataManiplate.calTA(d['acc_x'], d['acc_y'], d['acc_z']) for d in npDatas]
-	if mode[0] == 1:
-		TA = dataManiplate.getGlobalMax(TAColumn)
-	elif mode[0] == 2:
-		TAinterval = 50
-		TA = dataManiplate.getLocalMaxDiffence(TAColumn, TAinterval)
+	print dataManiplate.calSVMintegral( SVMColumn, dt )
 
-	##
-	## @@ AV & AVdelta calcalate @@ ##
-	##
-	AVColumn = [dataManiplate.calAV(d['acc_x'], d['acc_y'], d['acc_z'], d['gyro_x'], d['gyro_y'], d['gyro_z']) for d in npDatas]
-	if mode[0] == 1:
-		AV = dataManiplate.getGlobalMax(AVColumn)
-	elif mode[0] == 2:
-		AVinterval = 50
-		AV = dataManiplate.getLocalMaxDiffence(AVColumn, AVinterval)
+	# ##
+	# ## @@ TA & TAdelta calculate @@ ##
+	# ##
+	# TAColumn = [dataManiplate.calTA(d['acc_x'], d['acc_y'], d['acc_z']) for d in npDatas]
+	# if mode[0] == 1:
+	# 	TA = dataManiplate.getGlobalMax(TAColumn)
+	# elif mode[0] == 2:
+	# 	TAinterval = 50
+	# 	TA = dataManiplate.getLocalMaxDiffence(TAColumn, TAinterval)
 
-	# dataManiplate.integrateAngle()
+	# ##
+	# ## @@ AV & AVdelta calcalate @@ ##
+	# ##
+	# AVColumn = [dataManiplate.calAV(d['acc_x'], d['acc_y'], d['acc_z'], d['gyro_x'], d['gyro_y'], d['gyro_z']) for d in npDatas]
+	# if mode[0] == 1:
+	# 	AV = dataManiplate.getGlobalMax(AVColumn)
+	# elif mode[0] == 2:
+	# 	AVinterval = 50
+	# 	AV = dataManiplate.getLocalMaxDiffence(AVColumn, AVinterval)
 
-	##
-	## @@ Write Out to File @@ ##		
-	##
-	# outputStr ='{},{},{},{},{}\n'.format(_id, SVM, TAdeltaMax, AVdeltaMax, npDatas[0]['label'])
-	outputStr ='{},{},{},{},{}\n'.format(_id, SVM, TA, AV, npDatas[0]['label'])
 	
-	# print outputStr
-	fw.write(outputStr)
+	# ##
+	# ## @@ Write Out to File @@ ##		
+	# ##
+	# # outputStr ='{},{},{},{},{}\n'.format(_id, SVM, TAdeltaMax, AVdeltaMax, npDatas[0]['label'])
+	# outputStr ='{},{},{},{},{},{}\n'.format(_id, SVM, SVMintegral, TA, AV, npDatas[0]['label'])
+	
+	# # print outputStr
+	# fw.write(outputStr)
 
 print 'dataGene completed, {}'.format(outputName) 
 

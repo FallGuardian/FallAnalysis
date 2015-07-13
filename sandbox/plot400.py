@@ -5,8 +5,8 @@ import numpy as np
 import mlpy
 import matplotlib
 import matplotlib.pyplot as plt
-import database
-import dataManiplate
+from package import *
+
 db = database.initialize()
 cur = db.cursor()
 ##	Describes: plot the

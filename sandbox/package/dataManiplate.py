@@ -19,12 +19,16 @@ def integrateAngle(acc1, acc2, gyro, paraDict, resultDict):
 	resultDict['angle'] = (1-paraDict['alpha'])*(resultDict['angle'] + \
 	rad2deg((gyro/65.536) * paraDict['dt'] )) + (paraDict['alpha'])*(angleAcc)
 	
-	# print rad2deg((gyro) * paraDict['dt'])
+	print rad2deg((gyro) * paraDict['dt'])
 	
 
 	## Raw Version
 	# resultDict['angle'] += rad2deg(gyro*paraDict['dt'])
 	return resultDict['angle']
+
+
+def calSVM( acc_x, acc_y, acc_z ):
+	return math.sqrt(math.pow(acc_x,2)+math.pow(acc_y,2)+math.pow(acc_z,2))
 
 def calSVMintegral( SVMColumn, dt ):
 
@@ -33,12 +37,8 @@ def calSVMintegral( SVMColumn, dt ):
 	for d in SVMColumn:
 		i+=1
 		previousSum = d*i*dt + previousSum
+		print d*i*dt 
 	return previousSum
-	
-def calSVM( acc_x, acc_y, acc_z ):
-	return math.sqrt(math.pow(acc_x,2)+math.pow(acc_y,2)+math.pow(acc_z,2))
-
-
 
 def calTA( acc_x, acc_y, acc_z):
 	if acc_x != 0 and acc_y != 0 and acc_z != 0:
