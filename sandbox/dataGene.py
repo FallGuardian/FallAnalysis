@@ -86,16 +86,7 @@ for _id in targerIds:
 	# print "{}: len {}".format(_id, len(datas))
 	
 	## @@ Data Clean / Making Up / Denoise @@ ##
-	if len(datas) != 400:
-		print '{} is broken'.format(_id)
-		last = len(datas) - 1
-
-		appendData = map(tuple, ( (0,0,datas[last][2],datas[last][3],datas[last][4],\
-			datas[last][5],datas[last][6],datas[last][7],0)\
-			for i in range(len(datas), 400)))
-		
-		datas = datas + appendData
-
+	dataManiplate.dataComplement(datas, _id)
 	npDatas = np.array(datas, dtype=zip(targetCols,targetTypes))
 	
 	##
@@ -109,40 +100,48 @@ for _id in targerIds:
 		SVMinterval = 50
 		SVM = dataManiplate.getLocalMaxDiffence(SVMColumn, SVMinterval)
 	
+	# elif mode[0] == 3:
+		# print filter(lambda x: x<10, SVMColumn)
 	##
 	## @@ SVM integal @@ ##
 	##
-	print dataManiplate.calSVMintegral( SVMColumn, dt )
+	SVMintegral = dataManiplate.calSVMintegral( SVMColumn, dt )
 
-	# ##
-	# ## @@ TA & TAdelta calculate @@ ##
-	# ##
-	# TAColumn = [dataManiplate.calTA(d['acc_x'], d['acc_y'], d['acc_z']) for d in npDatas]
-	# if mode[0] == 1:
-	# 	TA = dataManiplate.getGlobalMax(TAColumn)
-	# elif mode[0] == 2:
-	# 	TAinterval = 50
-	# 	TA = dataManiplate.getLocalMaxDiffence(TAColumn, TAinterval)
+	##
+	## @@ TA & TAdelta calculate @@ ##
+	##
+	TAColumn = [dataManiplate.calTA(d['acc_x'], d['acc_y'], d['acc_z']) for d in npDatas]
+	if mode[0] == 1:
+		TA = dataManiplate.getGlobalMax(TAColumn)
+	elif mode[0] == 2:
+		TAinterval = 50
+		TA = dataManiplate.getLocalMaxDiffence(TAColumn, TAinterval)
 
-	# ##
-	# ## @@ AV & AVdelta calcalate @@ ##
-	# ##
-	# AVColumn = [dataManiplate.calAV(d['acc_x'], d['acc_y'], d['acc_z'], d['gyro_x'], d['gyro_y'], d['gyro_z']) for d in npDatas]
-	# if mode[0] == 1:
-	# 	AV = dataManiplate.getGlobalMax(AVColumn)
-	# elif mode[0] == 2:
-	# 	AVinterval = 50
-	# 	AV = dataManiplate.getLocalMaxDiffence(AVColumn, AVinterval)
+	##
+	## @@ AV & AVdelta calcalate @@ ##
+	##
+	AVColumn = [dataManiplate.calAV(d['acc_x'], d['acc_y'], d['acc_z'], d['gyro_x'], d['gyro_y'], d['gyro_z']) for d in npDatas]
+	if mode[0] == 1:
+		AV = dataManiplate.getGlobalMax(AVColumn)
+	elif mode[0] == 2:
+		AVinterval = 50
+		AV = dataManiplate.getLocalMaxDiffence(AVColumn, AVinterval)
 
+	##
+	## @@ POSTURE calcalate @@ ##
+	##    using t
+	##
+	GrefInit = [0,-9.8,0]
+
+	##
+	## @@ Write Out to File @@ ##		
+	##
+	# outputStr ='{},{},{},{},{}\n'.format(_id, SVM, TAdeltaMax, AVdeltaMax, npDatas[0]['label'])
+	outputStr ='{},{},{},{},{},{}\n'.format(_id, SVM, SVMintegral, TA, AV, npDatas[0]['label'])
 	
-	# ##
-	# ## @@ Write Out to File @@ ##		
-	# ##
-	# # outputStr ='{},{},{},{},{}\n'.format(_id, SVM, TAdeltaMax, AVdeltaMax, npDatas[0]['label'])
-	# outputStr ='{},{},{},{},{},{}\n'.format(_id, SVM, SVMintegral, TA, AV, npDatas[0]['label'])
-	
-	# # print outputStr
-	# fw.write(outputStr)
+ 
+	# print outputStr
+	fw.write(outputStr)
 
 print 'dataGene completed, {}'.format(outputName) 
 
