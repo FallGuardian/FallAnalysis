@@ -56,7 +56,7 @@ basePath = "/home/youngcoma/Dropbox/newFallDetect/experiment"
 ##
 cal_dataFileName = fileName[0]
 data = np.loadtxt("{}/calculated_data/{}".format(basePath,cal_dataFileName), delimiter=',')
-base_id, attrs = data[:, 0].astype(np.int), data[:,1:5] 
+base_id, attrs = data[:, 0].astype(np.int), data[:,1:6] 
 dataDict = dict(zip(base_id, attrs))
 
 # print 'calculated_data preview: \n{}\n\r'.format(dataDict)
@@ -71,24 +71,8 @@ totalCnt = len(base_id)
 ##
 ##	Read config/settings to set SVM,TA,AV from file
 ##
-configFileName = 'settings.txt'
-strList = []
-with open("{}/config/{}".format(basePath, configFileName), 'rb') as configFile:
-	
-	for line in configFile.readlines():
-		
-		if not line.startswith('#') :
-			line = line.strip()
-			strList.append(string.split(line,'='))
-		
-print 'Your experiment configs:\n{}\n\r'.format(strList)
-configsDict = dict(zip([row[0] for row in strList],[float(row[1]) for row in strList]))
-# print configsDict
-SVMstart, SVMend = configsDict['SVMstart'], configsDict['SVMend']
-TAstart ,TAend = configsDict['TAstart'], configsDict['TAend']
-AVstart, AVend = configsDict['AVstart'], configsDict['AVend']
-SVMstep, TAstep, AVstep = configsDict['SVMstep'], configsDict['TAstep'], configsDict['AVstep']
-
+configsDict = dataManiplate.readTxtConfig(basePath, 'settings.txt')
+print configsDict
 
 ##
 ##	@@ OUTPUT: open write out file
@@ -96,7 +80,7 @@ SVMstep, TAstep, AVstep = configsDict['SVMstep'], configsDict['TAstep'], configs
 writeOutFileName = '{}_result.csv'.format(string.split(cal_dataFileName,'.')[0])
 fw = open('{}/result/{}'.format(basePath, writeOutFileName) , 'w')
 print 'Write out file name: {}'.format(writeOutFileName)
-fw.write('#SVM,TA,AV,errorRate,FPids,TNids\n')
+# fw.write('#SVM,TA,AV,errorRate,FPids,TNids\n')
 
 ##
 ##	@@ Max Count enable/disable @@ ##
@@ -110,11 +94,12 @@ totalFPbaseIds = {}
 totalTNbaseIds = {}
 paraKeys = namedtuple("paraKeys", ["SVM", "TA", "AV"])
 
-print str(datetime.now())
-for SVM in np.arange(SVMstart, SVMend, SVMstep):
-	for TA in np.arange(TAstart, TAend, TAstep):
-		for AV in np.arange(AVstart, AVend, AVstep):
-		
+print "Start Time:{}".format(str(datetime.now()))
+
+for SVM in np.arange(configsDict['SVMstart'], configsDict['SVMend'], configsDict['SVMstep']):
+	for TA in np.arange(configsDict['TAstart'], configsDict['TAend'], configsDict['TAstep']):
+		for AV in np.arange(configsDict['AVstart'], configsDict['AVend'], configsDict['AVstep']):
+			
 			# print 'SVM: {}, TA: {}, AV: {}'.format(SVM, TA, AV)
 			# @@ Temperal varibale @@ ##
 			threasholdDict = {'SVM':SVM, 'TA':TA, 'AV':AV}
@@ -124,14 +109,14 @@ for SVM in np.arange(SVMstart, SVMend, SVMstep):
 			for _id in targerIds:
 				dataManiplate.thresholdBaseAlg(dataDict, _id, threasholdDict, paraDict, resultDict)
 
-			# print resultDict		
+			
 			##	@@ calculate accurcy @@
+
 			resultDict['errorRate'] = (resultDict['errorCntFP']+resultDict['errorCntTN']\
 				-resultDict['overMaxCntCnt'])/ float(totalCnt)
 			
-			# print resultDict['errorRate']
-			# outputStr = '{},{},{},{},{},{}\n'.format( SVM, TA, AV, resultDict['errorRate']\
-			# , '+'.join(resultDict['FPbaseIds']), '+'.join(resultDict['TNbaseIds']) )
+			
+			# print 'SVM:{},TA:{},AV:{},error:{}\n'.format( SVM, TA, AV, resultDict['errorRate'])
 
 			
 			k = paraKeys(SVM=SVM, TA=TA, AV=AV)
@@ -143,14 +128,14 @@ for SVM in np.arange(SVMstart, SVMend, SVMstep):
 ## Write to File by increasing order
 
 min_val = min(totalErrorRate.itervalues())
-for SVM in np.arange(SVMstart, SVMend, SVMstep):
-	for TA in np.arange(TAstart, TAend, TAstep):
-		for AV in np.arange(AVstart, AVend, AVstep):
+for SVM in np.arange(configsDict['SVMstart'], configsDict['SVMend'], configsDict['SVMstep']):
+	for TA in np.arange(configsDict['TAstart'], configsDict['TAend'], configsDict['TAstep']):
+		for AV in np.arange(configsDict['AVstart'], configsDict['AVend'], configsDict['AVstep']):
 			if totalErrorRate[paraKeys(SVM,TA,AV)] == min_val:
 				outputStr = "{},{},{},{},{},{}\n".format(SVM,TA,AV,totalErrorRate[paraKeys(SVM,TA,AV)]\
 					,totalFPbaseIds[paraKeys(SVM,TA,AV)],totalTNbaseIds[paraKeys(SVM,TA,AV)]) 
 				fw.write(outputStr)
-print str(datetime.now())
+print "Finish Time:{}".format(str(datetime.now()))
 fw.close()
-print 'bruteForce2 completed, generate .csv file'
-				## errorRate = (errorCntFP+errorCntTN-overMaxCntCnt)/totalCnt
+# print 'bruteForce2 completed, generate .csv file'
+				# errorRate = (errorCntFP+errorCntTN-overMaxCntCnt)/totalCnt

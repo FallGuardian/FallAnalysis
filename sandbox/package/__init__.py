@@ -1,1 +1,1 @@
-__all__ = ["database", "dataManiplate"];
+__all__ = ["database", "dataManiplate", "generalPlot"];

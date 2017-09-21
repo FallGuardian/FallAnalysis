@@ -1,10 +1,11 @@
-#testing
-import database
-import dataManiplate
-import numpy as np
-from dataManiplate import rad2deg
-import matplotlib.pyplot as plt
 import sys
+import MySQLdb
+from math import ceil, floor
+import numpy as np
+import mlpy
+import matplotlib
+import matplotlib.pyplot as plt
+from package import *
 
 db = database.initialize()
 cur = db.cursor()
@@ -45,5 +46,5 @@ plt.grid(True)
 plt.set_cmap(plt.cm.Paired)
 plot = plt.plot(range(len(pitchColunm)), pitchColunm, 'g')
 # plt.show()
-plt.savefig("{}/figure/angle/{}.png".format(basePath,figName),bbox_inches='tight')
+plt.savefig("{}/figure/angle/{}.png".format(basePath,figName))
 # print pitchColunm

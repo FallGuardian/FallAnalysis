@@ -66,8 +66,8 @@ fw = open("{}/calculated_data/{}".format(basePath, outputName) , 'w')
 ## mode 1: Global Max
 ## mode 2: Local(50 intervals) Max Difference 
 ##	[SVM,TA,AV]
-mode=[1,1,1]
 
+modeConfig = dataManiplate.readTxtConfig(basePath,'dataGeneMode.txt')
 # @@ Data Processing Setting @@ #
 brokenList = ""
 targetCols = ['base_id', 'id', 'acc_x', 'acc_y', 'acc_z', 'gyro_x', 'gyro_y', 'gyro_z', 'label']
@@ -94,13 +94,13 @@ for _id in targerIds:
 	##
 	SVMColumn = [dataManiplate.calSVM(d['acc_x'], d['acc_y'], d['acc_z']) for d in npDatas]
 
-	if mode[0] == 1:
+	if modeConfig["SVM"] == 1:
 		SVM = dataManiplate.getGlobalMax(SVMColumn)
-	elif mode[0] == 2:
+	elif modeConfig["SVM"] == 2:
 		SVMinterval = 50
 		SVM = dataManiplate.getLocalMaxDiffence(SVMColumn, SVMinterval)
 	
-	# elif mode[0] == 3:
+	# elif modeConfig[0] == 3:
 		# print filter(lambda x: x<10, SVMColumn)
 	##
 	## @@ SVM integal @@ ##
@@ -111,9 +111,9 @@ for _id in targerIds:
 	## @@ TA & TAdelta calculate @@ ##
 	##
 	TAColumn = [dataManiplate.calTA(d['acc_x'], d['acc_y'], d['acc_z']) for d in npDatas]
-	if mode[0] == 1:
-		TA = dataManiplate.getGlobalMax(TAColumn)
-	elif mode[0] == 2:
+	if modeConfig["TA"] == 1:
+		TA = dataManiplate.getGlobalMin(TAColumn)
+	elif modeConfig["TA"] == 2:
 		TAinterval = 50
 		TA = dataManiplate.getLocalMaxDiffence(TAColumn, TAinterval)
 
@@ -121,9 +121,9 @@ for _id in targerIds:
 	## @@ AV & AVdelta calcalate @@ ##
 	##
 	AVColumn = [dataManiplate.calAV(d['acc_x'], d['acc_y'], d['acc_z'], d['gyro_x'], d['gyro_y'], d['gyro_z']) for d in npDatas]
-	if mode[0] == 1:
+	if modeConfig["AV"] == 1:
 		AV = dataManiplate.getGlobalMax(AVColumn)
-	elif mode[0] == 2:
+	elif modeConfig["AV"] == 2:
 		AVinterval = 50
 		AV = dataManiplate.getLocalMaxDiffence(AVColumn, AVinterval)
 

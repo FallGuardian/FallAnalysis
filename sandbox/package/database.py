@@ -53,7 +53,7 @@ def getCol(cur, tableName, colName):
 def getColDistinct(cur, tableName, colName):
 	sql = "SELECT DISTINCT `{}` FROM `{}`".format(colName,tableName)
 	cur.execute(sql)
-	return cur.fetchall()
+	return [d[0]for d in cur.fetchall()]
 
 def getTableRowsByColValue(cur, tableName, colName, colValue):
 	sql = "SELECT * FROM `{}` WHERE `{}`=%(colValue)s".format(tableName, colName)
